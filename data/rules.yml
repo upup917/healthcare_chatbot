@@ -1,0 +1,7 @@
+version: "3.1"
+rules:
+
+- rule: open faq menu
+  steps:
+    - intent: show_menu_faq
+    - action: action_send_faq_menu

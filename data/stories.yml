@@ -1,0 +1,104 @@
+version: "3.1"
+stories:
+
+- story: greet flow
+  steps:
+    - intent: greet
+    - action: utter_greet
+
+- story: thank flow
+  steps:
+    - intent: thank
+    - action: utter_thank
+
+- story: goodbye flow
+  steps:
+    - intent: goodbye
+    - action: utter_goodbye
+
+- story: fallback flow
+  steps:
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+
+- story: greet → main menu
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: show_menu
+    - action: action_send_main_menu
+    
+
+# เมนูย่อย
+- story: show disease menu
+  steps:
+    - intent: show_menu_disease
+    - action: action_send_disease_menu
+
+- story: show treatment menu
+  steps:
+    - intent: show_menu_treatment
+    - action: action_send_treatment_menu
+
+- story: show selfcare menu
+  steps:
+    - intent: show_menu_selfcare
+    - action: action_send_selfcare_menu
+
+- story: ask contact info
+  steps:
+    - intent: ask_contact_info
+    - action: action_get_answer
+
+
+# ถามคำถามจริง → ตอบจาก DB
+- story: ask disease what
+  steps:
+    - intent: ask_disease_what
+    - action: action_get_answer
+
+- story: ask disease symptoms
+  steps:
+    - intent: ask_disease_symptoms
+    - action: action_get_answer
+
+- story: ask disease cause
+  steps:
+    - intent: ask_disease_cause
+    - action: action_get_answer
+
+- story: ask chemo what
+  steps:
+    - intent: ask_treatment_chemo_what
+    - action: action_get_answer
+
+- story: ask side effects
+  steps:
+    - intent: ask_treatment_side_effects
+    - action: action_get_answer
+
+- story: ask selfcare emotion
+  steps:
+    - intent: ask_selfcare_emotion
+    - action: action_get_answer
+
+- story: ask selfcare rest
+  steps:
+    - intent: ask_selfcare_rest
+    - action: action_get_answer
+
+- story: ask selfcare diet
+  steps:
+    - intent: ask_selfcare_diet
+    - action: action_get_answer
+
+- story: ask dos and donts
+  steps:
+    - intent: ask_treatment_dos_donts
+    - action: action_get_answer
+
+- story: ask learning resources
+  steps:
+    - intent: ask_learning_resources
+    - action: action_get_learning_resources
+

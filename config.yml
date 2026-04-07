@@ -1,0 +1,51 @@
+version: "3.1"
+language: en 
+
+pipeline:
+  # ตัดคำภาษาไทย + อังกฤษ
+- name: WhitespaceTokenizer
+  intent_tokenization_flag: false
+  case_sensitive: false
+
+  # วิเคราะห์โครงสร้างคำ เช่น prefix/suffix 
+- name: LexicalSyntacticFeaturizer
+
+  # แปลงคำเป็นเวกเตอร์แบบ Bag-of-Words
+- name: CountVectorsFeaturizer
+
+  # ใช้ character-level n-gram เพื่อจับคำพิมพ์ผิด/คำคล้ายกัน
+- name: CountVectorsFeaturizer
+  analyzer: char_wb
+  min_ngram: 3
+  max_ngram: 5
+
+  # ตัวจำแนก intent + entity หลัก
+- name: DIETClassifier
+  epochs: 100
+  learning_rate: 0.002
+  dropout: 0.3
+  constrain_similarities: true
+  random_seed: 42
+
+  # จัดการ synonym ของ entity เช่น “Chemo” = “เคมีบำบัด”
+- name: EntitySynonymMapper
+
+  # ดักกรณีที่โมเดลไม่มั่นใจ
+- name: FallbackClassifier
+  threshold: 0.6              # ถ้ามั่นใจ < 60% ให้ fallback
+  ambiguity_threshold: 0.1    # ถ้าคะแนน 2 intent ใกล้กันเกิน 10% ให้ fallback เช่นกัน
+
+policies:
+  # จำเส้นทางสนทนาที่เคยเห็น
+- name: MemoizationPolicy
+
+  # กำหนดกฎชัดเจน เช่น greet → utter_greet
+- name: RulePolicy
+
+  # ตัวเรียนรู้ลำดับเหตุการณ์การสนทนา (Core model)
+- name: TEDPolicy
+  max_history: 5
+  epochs: 100
+  constrain_similarities: true
+  random_seed: 42
+assistant_id: 20251019-151623-ecru-turmeric

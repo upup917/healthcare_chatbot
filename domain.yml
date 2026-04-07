@@ -1,0 +1,49 @@
+version: "3.1"
+
+intents:
+  - show_menu                 # เรียกเมนูหลัก
+  - show_menu_disease         # เมนูข้อมูลโรค
+  - show_menu_treatment       # เมนูการรักษา
+  - show_menu_selfcare        # เมนูดูแลตนเอง
+  - show_menu_faq             # เมนู FAQ
+  - ask_disease_what
+  - ask_disease_symptoms
+  - ask_disease_cause
+  - ask_treatment_chemo_what
+  - ask_treatment_side_effects
+  - ask_treatment_dos_donts
+  - ask_selfcare_emotion
+  - ask_selfcare_rest
+  - ask_selfcare_diet
+  - ask_contact_info
+  - ask_learning_resources
+  - greet
+  - thank
+  - goodbye
+  - out_of_scope
+
+actions:
+  - action_get_answer
+  - action_send_main_menu
+  - action_send_disease_menu
+  - action_send_treatment_menu
+  - action_send_selfcare_menu
+  - action_get_learning_resources
+  - action_send_faq_menu
+
+responses:
+  utter_greet:
+    - text: "สวัสดีครับ 😊 ยินดีให้ข้อมูลเกี่ยวกับโรคมะเร็งเม็ดเลือดขาวครับ พิมพ์ 'เมนู' เพื่อเริ่มต้นได้เลย"
+
+  utter_thank:
+    - text: "ขอบคุณครับ 🙏 ยินดีช่วยเหลือเสมอครับ"
+
+  utter_goodbye:
+    - text: "ไว้เจอกันใหม่นะครับ 👋 ขอให้สุขภาพแข็งแรงครับ"
+
+  utter_out_of_scope:
+    - text: "ขออภัยครับ ข้อมูลนี้อยู่นอกขอบเขตที่ผมให้บริการ ลองพิมพ์ 'เมนู' เพื่อดูหัวข้อที่ผมตอบได้ครับ"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
