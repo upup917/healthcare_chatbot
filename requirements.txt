@@ -1,0 +1,4 @@
+rasa
+rasa-sdk
+requests
+psycopg2-binary
