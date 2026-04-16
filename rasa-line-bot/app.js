@@ -10,12 +10,11 @@ const axios = require("axios");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const TOKEN = process.env.LINE_ACCESS_TOKEN;
-
+const TOKEN    = process.env.LINE_ACCESS_TOKEN;
+const RASA_URL = process.env.RASA_URL || "http://localhost:5005/webhooks/rest/webhook";
 
 const LINE_REPLY_URL = "https://api.line.me/v2/bot/message/reply";
 const LINE_PUSH_URL  = "https://api.line.me/v2/bot/message/push";
-const RASA_URL       = "http://localhost:5005/webhooks/rest/webhook";
 
 function lineHeaders() {
   return {
