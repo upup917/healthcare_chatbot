@@ -1,0 +1,22 @@
+{
+  "0": "ask_contact_info",
+  "1": "ask_disease_cause",
+  "2": "ask_disease_symptoms",
+  "3": "ask_disease_what",
+  "4": "ask_learning_resources",
+  "5": "ask_selfcare_diet",
+  "6": "ask_selfcare_emotion",
+  "7": "ask_selfcare_rest",
+  "8": "ask_treatment_chemo_what",
+  "9": "ask_treatment_dos_donts",
+  "10": "ask_treatment_side_effects",
+  "11": "goodbye",
+  "12": "greet",
+  "13": "out_of_scope",
+  "14": "show_menu",
+  "15": "show_menu_disease",
+  "16": "show_menu_faq",
+  "17": "show_menu_selfcare",
+  "18": "show_menu_treatment",
+  "19": "thank"
+}

@@ -1,4 +1,10 @@
 require("dotenv").config();
+const { createClient } = require('@supabase/supabase-js');
+
+// Supabase config
+const supabaseUrl = 'https://rrkuvmgwkgfwsdhwvrve.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJya3V2bWd3a2dmd3NkaHd2cnZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NzI4NzEsImV4cCI6MjA5MTU0ODg3MX0.RaTtdu4FW8D-J2yQWfx6x652zk8ShfK4o7EOiHkEu68';
+const supabase = createClient(supabaseUrl, supabaseKey);
 const express = require("express");
 const axios = require("axios");
 

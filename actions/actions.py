@@ -1,52 +1,33 @@
 from typing import Any, Text, Dict, List, Optional #ใช้บอกชนิดข้อมูลใน Python เพื่อให้โค้ดอ่านง่าย 
 import re #ใช้ regex สำหรับจับ pattern YouTube video id
 import requests #ใช้เรียก HTTP API YouTube oEmbed
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from supabase import create_client, Client
 from rasa_sdk import Action, Tracker #สำหรับเขียน custom actions ของ Rasa 
 from rasa_sdk.executor import CollectingDispatcher
 
-# DB 
-PG_HOST = "eilapgsql.in.psu.ac.th"
-PG_DB   = "linechatbot"
-PG_USER = "pocharapon.d"
-PG_PASS = "91}m2T3X-;Pz"
-PG_PORT = 5432
-def get_db_connection():
-    return psycopg2.connect(
-        host=PG_HOST, database=PG_DB, user=PG_USER, password=PG_PASS, port=PG_PORT
-    )
+
+# Supabase config
+SUPABASE_URL = "https://rrkuvmgwkgfwsdhwvrve.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJya3V2bWd3a2dmd3NkaHd2cnZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NzI4NzEsImV4cCI6MjA5MTU0ODg3MX0.RaTtdu4FW8D-J2yQWfx6x652zk8ShfK4o7EOiHkEu68"
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def fetch_answer_by_question(q: str) -> Optional[str]:  # ค้นหาคำตอบจากตาราง question 
-    conn = None
-    cur = None
+def fetch_answer_by_question(q: str) -> Optional[str]:
     try:
-        conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        # ทำ exact ก่อน
-        cur.execute("SELECT answer FROM question WHERE question = %s LIMIT 1", (q,))
-        row = cur.fetchone()
-        if row and row.get("answer"):
-            return row["answer"]
-        # ถ้าไม่ทำ exact ทำ partial fallback
-        cur.execute(
-            "SELECT answer FROM question WHERE question ILIKE %s ORDER BY question LIMIT 1",
-            (f"%{q}%",),
-        )
-        row = cur.fetchone()
-        if row and row.get("answer"):
-            return row["answer"]
+        # Exact match
+        response = supabase.table("question").select("answer").eq("question", q).limit(1).execute()
+        data = response.data
+        if data and len(data) > 0 and data[0].get("answer"):
+            return data[0]["answer"]
+        # Partial match fallback
+        response = supabase.table("question").select("answer").ilike("question", f"%{q}%").order("question").limit(1).execute()
+        data = response.data
+        if data and len(data) > 0 and data[0].get("answer"):
+            return data[0]["answer"]
         return None
     except Exception as e:
-        print("DB error:", e)
+        print("Supabase error:", e)
         return None
-    finally:
-        try:
-            if cur: cur.close()
-            if conn: conn.close()
-        except:
-            pass
 
 # ตัวช่วยส่งข้อความบน line
 def _say(dispatcher: CollectingDispatcher, messages: List[str]):
@@ -289,18 +270,13 @@ class ActionGetLearningResources(Action):
         return "action_get_learning_resources"
 
     def run(self, dispatcher, tracker, domain):
-        conn = None
-        cur = None
         try:
-            conn = get_db_connection()
-            cur = conn.cursor(cursor_factory=RealDictCursor) 
-            cur.execute("SELECT link FROM youtubelink ORDER BY id LIMIT 5") # ดึง link จากตาราง youtubelink
-            rows = cur.fetchall()
-
-            if not rows:
+            response = supabase.table("youtubelink").select("link").order("id").limit(5).execute()
+            data = response.data
+            if not data:
                 dispatcher.utter_message(text="ยังไม่มีวิดีโอเพิ่มเติมในตอนนี้ครับ")
                 return []
-            videos = [row["link"] for row in rows]
+            videos = [row["link"] for row in data]
             flex_contents = []
             for i, link in enumerate(videos):
                 #ดึง metadata จาก oEmbed
@@ -360,11 +336,8 @@ class ActionGetLearningResources(Action):
             dispatcher.utter_message(json_message=flex_message) #ส่งออก
 
         except Exception as e:
-            print("DB error:", e)
+            print("Supabase error:", e)
             dispatcher.utter_message(text="ขออภัยไม่สามารถดึงวิดีโอได้ในตอนนี้")
-        finally:
-            if cur: cur.close()
-            if conn: conn.close()
         return []
 
 # Actions เมนู
