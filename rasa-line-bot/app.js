@@ -185,7 +185,11 @@ app.post("/webhook", async (req, res) => {
   }
 });
 
-//Start Server
-app.listen(PORT, () => {
-  console.log(`Server running at: http://localhost:${PORT}`);
-});
+// Start Server locally. Vercel imports the Express app instead.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running at: http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
