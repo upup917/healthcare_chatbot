@@ -1,4 +1,4 @@
-rasa
-requests
-supabase
-rasa-sdk
+rasa==3.6.21
+rasa-sdk==3.6.2
+requests==2.31.0
+supabase<2

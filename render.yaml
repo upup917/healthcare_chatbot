@@ -2,23 +2,34 @@ services:
   - type: web
     name: rasa-api
     rootDir: .
-    env: python
+    runtime: python
     buildCommand: |
-      if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install rasa requests psycopg2-binary; fi
-    startCommand: rasa run --enable-api --cors "*" --model models --port 10000
+      pip install -r requirements.txt
+    startCommand: rasa run --enable-api --cors "*" --model models --port $PORT
+    envVars:
+      - key: PORT
+        value: 5005
+      - key: ACTION_SERVER_HOSTPORT
+        fromService:
+          type: pserv
+          name: rasa-actions
+          property: hostport
 
-  - type: worker
+  - type: pserv
     name: rasa-actions
     rootDir: .
-    env: python
+    runtime: python
     buildCommand: |
-      if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install rasa requests psycopg2-binary; fi
-    startCommand: rasa run actions --port 5055
+      pip install -r requirements.txt
+    startCommand: rasa run actions --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 5055
 
   - type: web
     name: line-bridge
     rootDir: rasa-line-bot
-    env: node
+    runtime: node
     buildCommand: npm install
     startCommand: npm run start
     envVars:
@@ -26,5 +37,8 @@ services:
         sync: false
       - key: LINE_CHANNEL_SECRET
         sync: false
-      - key: RASA_URL
-        value: http://rasa-api:10000/webhooks/rest/webhook
+      - key: RASA_HOSTPORT
+        fromService:
+          type: web
+          name: rasa-api
+          property: hostport
